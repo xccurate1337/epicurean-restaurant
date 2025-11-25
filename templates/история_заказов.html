@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}История заказов - Эпикурей{% endblock %}
+
+{% block content %}
+<h1 class="page-title">📦 История заказов</h1>
+
+{% if заказы %}
+<div style="display: grid; gap: 1.5rem;">
+    {% for заказ in заказы %}
+    <div style="background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+            <div>
+                <h3 style="margin: 0;">Заказ #{{ заказ.id }}</h3>
+                <p style="color: #636e72; margin: 0.5rem 0 0 0;">
+                    {{ заказ.created_at|date:"d.m.Y H:i" }} • 
+                    {{ заказ.имя_клиента }} • 
+                    {{ заказ.телефон }}
+                </p>
+            </div>
+            
+            <div style="text-align: right;">
+                <div style="font-size: 1.3rem; font-weight: bold; color: #e17055;">
+                    {{ заказ.общая_сумма }} ₽
+                </div>
+                <div style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; 
+                            {% if заказ.статус == 'выполнен' %}background: #55efc4; color: #2d3436;
+                            {% elif заказ.статус == 'готовится' %}background: #ffeaa7; color: #2d3436;
+                            {% elif заказ.статус == 'новый' %}background: #74b9ff; color: white;
+                            {% elif заказ.статус == 'отменен' %}background: #ff7675; color: white;
+                            {% else %}background: #a29bfe; color: white;{% endif %}">
+                    {{ заказ.статус }}
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start;">
+            <div>
+                <h4 style="margin-bottom: 0.5rem;">🍽️ Состав заказа:</h4>
+                <div style="display: grid; gap: 0.5rem;">
+                    {% for элемент in заказ.элементы.all %}
+                    <div style="display: flex; justify-content: between;">
+                        <span>{{ элемент.блюдо.название }} × {{ элемент.количество }}</span>
+                        <span style="font-weight: bold;">{{ элемент.подитог }} ₽</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if заказ.комментарий %}
+                <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <strong>💬 Комментарий:</strong> {{ заказ.комментарий }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{% url 'детали_заказа' заказ.id %}" class="btn btn-secondary">
+                    👁️ Подробнее
+                </a>
+                {% if заказ.статус == 'новый' %}
+                <form method="POST" action="{% url 'отменить_заказ' заказ.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="background: #ff7675; color: white;">
+                        ❌ Отменить
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align: center; padding: 4rem;">
+    <h2 style="color: #636e72; margin-bottom: 1rem;">📭 Заказов пока нет</h2>
+    <p style="color: #636e72; margin-bottom: 2rem;">Сделайте свой первый заказ и он появится здесь!</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">🍽️ Сделать заказ</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Оформление заказа - Эпикурей{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🚀 Оформление заказа</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+    <!-- Форма заказа -->
+    <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <h2 style="margin-bottom: 1.5rem;">📋 Данные для заказа</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="display: grid; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">👤 Ваше имя *</label>
+                    <input type="text" name="имя" value="{{ user.first_name }}" required 
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">📞 Телефон *</label>
+                    <input type="tel" name="телефон" value="{{ user.профиль.телефон }}" required 
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">🏠 Адрес доставки</label>
+                    <textarea name="адрес" rows="3" 
+                              style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">{{ user.профиль.адрес }}</textarea>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">💬 Комментарий к заказу</label>
+                    <textarea name="комментарий" rows="3" placeholder="Особые пожелания, аллергии и т.д."
+                              style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">💳 Способ оплаты</label>
+                    <select name="способ_оплаты" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                        <option value="наличные">💵 Наличные при получении</option>
+                        <option value="карта">💳 Картой при получении</option>
+                        <option value="онлайн">🌐 Онлайн оплата</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">🎁 Промокод (если есть)</label>
+                    <input type="text" name="промокод" placeholder="Введите промокод"
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">
+                ✅ Подтвердить заказ
+            </button>
+        </form>
+    </div>
+    
+    <!-- Сводка заказа -->
+    <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); height: fit-content;">
+        <h2 style="margin-bottom: 1.5rem;">📦 Ваш заказ</h2>
+        
+        <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+            {% for элемент in элементы %}
+            <div style="display: flex; justify-content: between; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                <div>
+                    <strong>{{ элемент.блюдо.название }}</strong>
+                    <div style="color: #636e72; font-size: 0.9rem;">x{{ элемент.количество }}</div>
+                </div>
+                <div style="font-weight: bold; color: #e17055;">
+                    {{ элемент.подитог }} ₽
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="border-top: 2px solid #eee; padding-top: 1rem;">
+            <div style="display: flex; justify-content: between; margin-bottom: 0.5rem;">
+                <span>Позиций:</span>
+                <strong>{{ корзина.количество_позиций }}</strong>
+            </div>
+            <div style="display: flex; justify-content: between; margin-bottom: 0.5rem;">
+                <span>Сумма:</span>
+                <strong>{{ корзина.общая_сумма }} ₽</strong>
+            </div>
+            <div style="display: flex; justify-content: between; margin-bottom: 0.5rem;">
+                <span>Доставка:</span>
+                <strong>Бесплатно</strong>
+            </div>
+            <div style="display: flex; justify-content: between; font-size: 1.2rem; font-weight: bold; color: #e17055; border-top: 1px solid #eee; padding-top: 0.5rem;">
+                <span>ИТОГО:</span>
+                <strong>{{ корзина.общая_сумма }} ₽</strong>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

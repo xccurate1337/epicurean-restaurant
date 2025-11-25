@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Ресторан "Эпикурей"{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Искусство вкуса 🍽️</h1>
+
+<!-- Фильтры -->
+<div class="filters">
+    <form method="GET" action="{% url 'home' %}" class="filter-group">
+        <input type="text" name="q" placeholder="Поиск блюд..." value="{{ query }}" class="search-input">
+
+        <select name="категория" class="filter-select">
+            <option value="">Все категории</option>
+            {% for категория in категории %}
+            <option value="{{ категория.slug }}" {% if selected_filters.категория == категория.slug %}selected{% endif %}>
+                {{ категория.иконка }} {{ категория.название }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select name="тип" class="filter-select">
+            <option value="">Все типы</option>
+            <option value="закуска" {% if selected_filters.тип == 'закуска' %}selected{% endif %}>🥗 Закуски</option>
+            <option value="салат" {% if selected_filters.тип == 'салат' %}selected{% endif %}>🥬 Салаты</option>
+            <option value="суп" {% if selected_filters.тип == 'суп' %}selected{% endif %}>🍜 Супы</option>
+            <option value="основное" {% if selected_filters.тип == 'основное' %}selected{% endif %}>🍖 Основные</option>
+            <option value="десерт" {% if selected_filters.тип == 'десерт' %}selected{% endif %}>🍰 Десерты</option>
+            <option value="напиток" {% if selected_filters.тип == 'напиток' %}selected{% endif %}>🥤 Напитки</option>
+        </select>
+
+        <input type="number" name="мин_цена" placeholder="Мин цена" value="{{ selected_filters.мин_цена }}" class="filter-select">
+        <input type="number" name="макс_цена" placeholder="Макс цена" value="{{ selected_filters.макс_цена }}" class="filter-select">
+
+        <select name="сортировка" class="filter-select">
+            <option value="популярность" {% if selected_filters.сортировка == 'популярность' %}selected{% endif %}>По популярности</option>
+            <option value="цена_возр" {% if selected_filters.сортировка == 'цена_возр' %}selected{% endif %}>Цена ↑</option>
+            <option value="цена_убыв" {% if selected_filters.сортировка == 'цена_убыв' %}selected{% endif %}>Цена ↓</option>
+            <option value="рейтинг" {% if selected_filters.сортировка == 'рейтинг' %}selected{% endif %}>По рейтингу</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">🔍 Применить</button>
+        <a href="{% url 'home' %}" class="btn btn-outline">❌ Сбросить</a>
+    </form>
+</div>
+
+<!-- Сетка блюд -->
+<div class="dishes-grid">
+    {% for dish in dishes %}
+    <div class="dish-card" onclick="window.location.href='{% url 'dish_detail' dish.slug %}'" style="cursor: pointer;">
+        {% if dish.изображение %}
+        <img src="{{ dish.изображение }}" alt="{{ dish.название }}" class="dish-image">
+        {% else %}
+        <div class="dish-image" style="background: #ddd; display: flex; align-items: center; justify-content: center; color: #999;">
+            🍽️ Изображение отсутствует
+        </div>
+        {% endif %}
+
+        <div class="dish-info">
+            <h3 class="dish-name">{{ dish.название }}</h3>
+            <p class="dish-description">{{ dish.описание }}</p>
+
+            <div class="dish-price">
+                {% if dish.акция %}
+                    <span class="current-price">{{ dish.текущая_цена }} ₽</span>
+                    <span class="original-price">{{ dish.цена }} ₽</span>
+                    <span class="discount-badge">-{{ dish.процент_скидки }}%</span>
+                {% else %}
+                    <span class="current-price">{{ dish.цена }} ₽</span>
+                {% endif %}
+            </div>
+
+            <!-- Рейтинг -->
+            <div class="rating">
+                {% with rating=dish.средний_рейтинг %}
+                {% for i in "12345" %}
+                    {% if forloop.counter <= rating %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+                <span class="rating-count">({{ dish.количество_отзывов }})</span>
+                {% endwith %}
+            </div>
+
+            <div class="dish-actions">
+                {% if user.is_authenticated %}
+                    <button onclick="event.stopPropagation(); addToCart({{ dish.id }})" class="btn btn-primary">
+                        🛒 В корзину
+                    </button>
+                    <a href="{% url 'добавить_в_избранное' dish.id %}" class="btn btn-outline" onclick="event.stopPropagation()">
+                        ❤️
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary" onclick="event.stopPropagation()">
+                        🔑 Войти
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align: center; grid-column: 1 / -1; color: #636e72; padding: 3rem;">
+        <h3>😔 Блюда не найдены</h3>
+        <p>Попробуйте изменить параметры поиска или фильтры</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+// Предотвращаем клик по кнопкам от открытия карточки
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.btn') || e.target.closest('button')) {
+        e.stopPropagation();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль - Эпикурей{% endblock %}
+
+{% block content %}
+<h1 class="page-title">👤 Ваш профиль</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+    <!-- Форма профиля -->
+    <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <h2 style="margin-bottom: 1.5rem;">📝 Редактирование профиля</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="display: grid; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Имя</label>
+                        <input type="text" name="имя" value="{{ user.first_name }}"
+                               style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Фамилия</label>
+                        <input type="text" name="фамилия" value="{{ user.last_name }}"
+                               style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">📧 Email *</label>
+                    <input type="email" name="email" value="{{ user.email }}" required
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">📞 Телефон</label>
+                    <input type="tel" name="телефон" value="{{ профиль.телефон }}"
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">🎂 Дата рождения</label>
+                    <input type="date" name="дата_рождения" value="{{ профиль.дата_рождения|date:'Y-m-d' }}"
+                           style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">🏠 Адрес доставки</label>
+                    <textarea name="адрес" rows="3"
+                              style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">{{ профиль.адрес }}</textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem;">
+                💾 Сохранить изменения
+            </button>
+        </form>
+    </div>
+    
+    <!-- Статистика -->
+    <div style="display: grid; gap: 1.5rem;">
+        <!-- Статистика пользователя -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h2 style="margin-bottom: 1.5rem;">📊 Ваша статистика</h2>
+            
+            <div style="display: grid; gap: 1rem;">
+                <div style="display: flex; justify-content: between; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <span>🛒 Всего заказов:</span>
+                    <strong>{{ user.заказы.count }}</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: between; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <span>❤️ В избранном:</span>
+                    <strong>{{ user.избранное.count }}</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: between; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <span>⭐ Оставлено отзывов:</span>
+                    <strong>{{ user.отзывы.count }}</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: between; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <span>👤 Участник с:</span>
+                    <strong>{{ user.date_joined|date:"d.m.Y" }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Быстрые действия -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h2 style="margin-bottom: 1.5rem;">⚡ Быстрые действия</h2>
+            
+            <div style="display: grid; gap: 0.8rem;">
+                <a href="{% url 'история_заказов' %}" class="btn btn-secondary" style="justify-content: start;">
+                    📦 История заказов
+                </a>
+                <a href="{% url 'избранное' %}" class="btn btn-secondary" style="justify-content: start;">
+                    ❤️ Избранное
+                </a>
+                <a href="{% url 'корзина' %}" class="btn btn-secondary" style="justify-content: start;">
+                    🛒 Корзина
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-primary" style="justify-content: start;">
+                    🍽️ Сделать новый заказ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

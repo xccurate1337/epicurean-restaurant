@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ dish.название }} - Ресторан "Эпикурей"{% endblock %}
+
+{% block content %}
+<style>
+    .dish-detail {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .detail-image-container {
+        position: sticky;
+        top: 2rem;
+    }
+
+    .detail-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .no-image {
+        width: 100%;
+        height: 300px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+
+    .detail-info {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .dish-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #2d3436;
+        margin-bottom: 1rem;
+        border-bottom: 3px solid #e17055;
+        padding-bottom: 0.5rem;
+    }
+
+    .dish-price-section {
+        background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .current-price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2d3436;
+    }
+
+    .original-price {
+        font-size: 1.3rem;
+        color: #636e72;
+        text-decoration: line-through;
+        margin-left: 1rem;
+    }
+
+    .discount-badge {
+        background: #e17055;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-left: 1rem;
+    }
+
+    .dish-meta {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        color: #2d3436;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #dfe6e9;
+    }
+
+    .description-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #2d3436;
+        margin-bottom: 2rem;
+    }
+
+    .ingredients-text {
+        background: #fff9f7;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #e17055;
+        line-height: 1.6;
+    }
+
+    .nutrition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .nutrition-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
+    }
+
+    .nutrition-value {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #e17055;
+    }
+
+    .nutrition-label {
+        font-size: 0.9rem;
+        color: #636e72;
+        margin-top: 0.3rem;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        background: #e17055;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-top: 2rem;
+    }
+
+    .back-button:hover {
+        background: #d63031;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .dish-detail {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .detail-image-container {
+            position: static;
+        }
+
+        .detail-image, .no-image {
+            height: 250px;
+        }
+    }
+</style>
+
+<div class="dish-detail">
+    <div class="detail-image-container">
+        {% if dish.изображение %}
+        <img src="{{ dish.изображение }}" alt="{{ dish.название }}" class="detail-image">
+        {% else %}
+        <div class="no-image">
+            🍽️ Изображение отсутствует
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="detail-info">
+        <h1 class="dish-title">{{ dish.название }}</h1>
+
+        <div class="dish-price-section">
+            {% if dish.акция %}
+                <span class="current-price">{{ dish.текущая_цена }} ₽</span>
+                <span class="original-price">{{ dish.цена }} ₽</span>
+                <span class="discount-badge">-{{ dish.процент_скидки }}%</span>
+            {% else %}
+                <span class="current-price">{{ dish.цена }} ₽</span>
+            {% endif %}
+        </div>
+
+        <div class="dish-meta">
+            <p><strong>📏 Вес/Объем:</strong> {{ dish.вес_объем }}</p>
+            <p><strong>⏱️ Время приготовления:</strong> {{ dish.время_приготовления }} мин</p>
+            {% if dish.уровень_остроты > 0 %}
+            <p><strong>🌶️ Острота:</strong> {{ dish.уровень_остроты }}/4</p>
+            {% endif %}
+        </div>
+
+        <div class="description-section">
+            <h3 class="section-title">📝 Описание</h3>
+            <p class="description-text">{{ dish.описание }}</p>
+        </div>
+
+        <div class="ingredients-section">
+            <h3 class="section-title">🥗 Состав</h3>
+            <div class="ingredients-text">
+                {{ dish.состав|linebreaks }}
+            </div>
+        </div>
+
+        {% if dish.пищевая_ценность %}
+        <div class="nutrition-section">
+            <h3 class="section-title">📊 Пищевая ценность</h3>
+            <div class="nutrition-grid">
+                {% for key, value in dish.пищевая_ценность.items %}
+                <div class="nutrition-item">
+                    <div class="nutrition-value">{{ value }}</div>
+                    <div class="nutrition-label">{{ key }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'home' %}" class="back-button">
+            ← Назад к меню
+        </a>
+    </div>
+</div>
+{% endblock %}

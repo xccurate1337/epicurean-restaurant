@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Корзина - Эпикурей{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🛒 Ваша корзина</h1>
+
+{% if элементы %}
+<div style="background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+    <div style="display: grid; gap: 1rem;">
+        {% for элемент in элементы %}
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid #eee; border-radius: 10px;">
+            {% if элемент.блюдо.изображение %}
+            <img src="{{ элемент.блюдо.изображение }}" alt="{{ элемент.блюдо.название }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+            {% endif %}
+            
+            <div style="flex: 1;">
+                <h3 style="margin: 0 0 0.5rem 0;">{{ элемент.блюдо.название }}</h3>
+                <p style="color: #636e72; margin: 0;">{{ элемент.блюдо.вес_объем }}</p>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <form method="POST" style="display: flex; align-items: center; gap: 0.5rem;">
+                    {% csrf_token %}
+                    <input type="hidden" name="блюдо_id" value="{{ элемент.id }}">
+                    <button type="submit" name="действие" value="удалить" class="btn" style="background: #ff7675; color: white;">🗑️</button>
+                    
+                    <input type="number" name="количество" value="{{ элемент.количество }}" min="1" style="width: 60px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                    
+                    <button type="submit" name="действие" value="обновить" class="btn btn-outline">🔄</button>
+                </form>
+                
+                <div style="font-weight: bold; color: #e17055; font-size: 1.2rem;">
+                    {{ элемент.подитог }} ₽
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #eee;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0;">Итого: {{ корзина.общая_сумма }} ₽</h2>
+                <p style="color: #636e72; margin: 0.5rem 0 0 0;">{{ корзина.количество_позиций }} позиции</p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <a href="{% url 'home' %}" class="btn btn-outline">← Продолжить покупки</a>
+                <a href="{% url 'оформление_заказа' %}" class="btn btn-primary">🚀 Оформить заказ</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="text-align: center; padding: 4rem;">
+    <h2 style="color: #636e72; margin-bottom: 1rem;">😔 Корзина пуста</h2>
+    <p style="color: #636e72; margin-bottom: 2rem;">Добавьте что-нибудь вкусненькое!</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">🍽️ Перейти к меню</a>
+</div>
+{% endif %}
+{% endblock %}

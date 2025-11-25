@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Эпикурей</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2d3436;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d3436;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: #e17055;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d63031;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e17055;
+            color: #e17055;
+        }
+
+        .btn-outline:hover {
+            background: #e17055;
+            color: white;
+        }
+
+        .error {
+            background: #ff7675;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            color: #636e72;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo">🍷 Эпикурей</div>
+            <h1>🔑 Вход в аккаунт</h1>
+            
+            {% if form.errors %}
+            <div class="error">
+                Неверное имя пользователя или пароль.
+            </div>
+            {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>👤 Имя пользователя</label>
+                    <input type="text" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>🔒 Пароль</label>
+                    <input type="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    🚀 Войти
+                </button>
+            </form>
+            
+            <div class="divider">
+                Ещё нет аккаунта?
+            </div>
+            
+            <div class="register-link">
+                <a href="{% url 'register' %}">📝 Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
