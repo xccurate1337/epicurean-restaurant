@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Avg, Count
 from django.core.cache import cache
 from .models import *
+from .forms import БлюдоФорма
 import json
 
 
@@ -63,7 +64,7 @@ def home(request):
     elif сортировка == 'рейтинг':
         блюда = блюда.annotate(avg_rating=Avg('отзывы__рейтинг')).order_by('-avg_rating')
     else:
-        блюда = блюда.order_by('категория__название', '-популярность', 'название')  # Сначала по категории
+        блюда = блюда.order_by('категория__название', '-популярность', 'название')
 
     категории = Категория.objects.filter(активно=True)
 
@@ -372,11 +373,39 @@ def поиск(request):
     return JsonResponse({'результаты': []})
 
 
+# АДМИН-ПАНЕЛЬ ДЛЯ ДОБАВЛЕНИЯ БЛЮД
+from django.contrib.auth.decorators import user_passes_test
+
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+
+@user_passes_test(is_admin, login_url='/admin/login/')
+def добавить_блюдо(request):
+    if request.method == 'POST':
+        form = БлюдоФорма(request.POST)
+        if form.is_valid():
+            блюдо = form.save()
+            messages.success(request, f'Блюдо "{блюдо.название}" успешно добавлено!')
+            return redirect('dish_detail', slug=блюдо.slug)
+    else:
+        form = БлюдоФорма()
+
+    return render(request, 'admin/add_dish.html', {'form': form})
+
+
+@user_passes_test(is_admin, login_url='/admin/login/')
+def список_блюд_админ(request):
+    блюда = Блюдо.objects.all().order_by('-создано')
+    return render(request, 'admin/dishes_list.html', {'блюда': блюда})
+
+
 # Кэшируем популярные блюда
 def популярные_блюда():
     cache_key = 'популярные_блюда'
     блюда = cache.get(cache_key)
     if not блюда:
         блюда = Блюдо.objects.filter(активно=True).order_by('-популярность')[:8]
-        cache.set(cache_key, блюда, 3600)  # Кэш на 1 час
+        cache.set(cache_key, блюда, 3600)
     return блюда
