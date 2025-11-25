@@ -1,49 +1,435 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>📝 Добавить новое блюдо</h2>
-    
-    <form method="post" class="mt-3">
-        {% csrf_token %}
-        
-        <div class="row">
-            <div class="col-md-6">
-                <h4>Основная информация</h4>
-                {% for field in form %}
-                    {% if forloop.counter0 < 8 %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                {% endfor %}
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
+            <!-- Хедер -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-gradient-primary mb-3">🍽️ Добавить новое блюдо</h1>
+                <p class="lead text-muted">Заполните информацию о новом блюде для меню ресторана</p>
             </div>
-            
-            <div class="col-md-6">
-                <h4>Дополнительная информация</h4>
-                {% for field in form %}
-                    {% if forloop.counter0 >= 8 %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                    </div>
-                    {% endif %}
-                {% endfor %}
+
+            <!-- Основная карточка -->
+            <div class="card shadow-2xl border-0">
+                <div class="card-body p-5">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Секция 1: Основная информация -->
+                        <div class="section-card mb-5">
+                            <div class="section-header mb-4">
+                                <div class="section-icon">📋</div>
+                                <h4 class="section-title">Основная информация</h4>
+                                <div class="section-line"></div>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">🍴 Название блюда</label>
+                                        {{ form.название }}
+                                        <div class="form-hint">Укажите полное название блюда</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">🔗 URL-адрес</label>
+                                        {{ form.slug }}
+                                        <div class="form-hint">Латинские буквы, цифры и дефисы</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">📂 Категория</label>
+                                        {{ form.категория }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">🏷️ Тип блюда</label>
+                                        {{ form.тип_блюда }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция 2: Цены и акции -->
+                        <div class="section-card mb-5">
+                            <div class="section-header mb-4">
+                                <div class="section-icon">💰</div>
+                                <h4 class="section-title">Цены и акции</h4>
+                                <div class="section-line"></div>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">💵 Основная цена</label>
+                                        {{ form.цена }}
+                                        <div class="form-hint">Цена в рублях</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="promotion-toggle">
+                                            <label class="toggle-label">
+                                                {{ form.акция }}
+                                                <span class="toggle-slider"></span>
+                                                <span class="toggle-text">🎯 Включить акцию</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">💸 Цена со скидкой</label>
+                                        {{ form.цена_со_скидкой }}
+                                        <div class="form-hint">Если блюдо по акции</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция 3: Внешний вид -->
+                        <div class="section-card mb-5">
+                            <div class="section-header mb-4">
+                                <div class="section-icon">🖼️</div>
+                                <h4 class="section-title">Внешний вид</h4>
+                                <div class="section-line"></div>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">📸 Ссылка на изображение</label>
+                                        {{ form.изображение }}
+                                        <div class="form-hint">URL высококачественной картинки блюда</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция 4: Описание -->
+                        <div class="section-card mb-5">
+                            <div class="section-header mb-4">
+                                <div class="section-icon">📝</div>
+                                <h4 class="section-title">Описание и состав</h4>
+                                <div class="section-line"></div>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">📄 Описание блюда</label>
+                                        {{ form.описание }}
+                                        <div class="form-hint">Краткое описание для клиентов</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">🥗 Состав и ингредиенты</label>
+                                        {{ form.состав }}
+                                        <div class="form-hint">Перечислите основные ингредиенты</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция 5: Детали -->
+                        <div class="section-card mb-5">
+                            <div class="section-header mb-4">
+                                <div class="section-icon">⚙️</div>
+                                <h4 class="section-title">Детали блюда</h4>
+                                <div class="section-line"></div>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="form-label">⚖️ Вес/Объем</label>
+                                        {{ form.вес_объем }}
+                                        <div class="form-hint">Например: 280г, 500мл</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="form-label">⏱️ Время приготовления</label>
+                                        {{ form.время_приготовления }}
+                                        <div class="form-hint">В минутах</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="form-label">🌶️ Уровень остроты</label>
+                                        {{ form.уровень_остроты }}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="form-label">📊 Пищевая ценность</label>
+                                        {{ form.пищевая_ценность }}
+                                        <div class="form-hint">JSON формат</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">🏷️ Теги</label>
+                                        {{ form.теги }}
+                                        <div class="form-hint">JSON массив тегов</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопки действий -->
+                        <div class="action-buttons mt-5 pt-4 border-top">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                        <i class="fas fa-arrow-left me-2"></i>Вернуться на главную
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
+                                        <i class="fas fa-save me-2"></i>💾 Сохранить блюдо
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        
-        <button type="submit" class="btn btn-success">➕ Добавить блюдо</button>
-        <a href="{% url 'главная' %}" class="btn btn-secondary">Отмена</a>
-    </form>
+    </div>
 </div>
 
 <style>
-    .form-control, .form-select {
-        margin-bottom: 10px;
+/* Основные стили */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* Карточка */
+.card {
+    border: none;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.shadow-2xl {
+    box-shadow: var(--shadow-2xl);
+}
+
+/* Секции */
+.section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-icon {
+    font-size: 2rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-title {
+    color: #2d3748;
+    font-weight: 700;
+    margin: 0;
+}
+
+.section-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, transparent);
+}
+
+/* Формы */
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #ffffff;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-hint {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+/* Тоггл акции */
+.promotion-toggle {
+    padding-top: 1.75rem;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.toggle-slider {
+    width: 60px;
+    height: 30px;
+    background: #e2e8f0;
+    border-radius: 15px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"]:checked + .toggle-slider {
+    background: var(--success-gradient);
+}
+
+input[type="checkbox"]:checked + .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+.toggle-text {
+    font-size: 1rem;
+}
+
+/* Кнопки */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-outline-secondary:hover {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+}
+
+/* Заголовок */
+.text-gradient-primary {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 1rem;
     }
+
+    .section-card {
+        padding: 1.5rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .section-line {
+        width: 100px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.section-card {
+    animation: fadeIn 0.8s ease-out;
+}
 </style>
 {% endblock %}
