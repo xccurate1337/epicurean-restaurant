@@ -29,4 +29,8 @@ urlpatterns = [
 
     # Регистрация
     path('register/', views.register, name='register'),
+
+    # АДМИН-ПАНЕЛЬ
+    path('admin/add-dish/', views.добавить_блюдо, name='добавить_блюдо'),
+    path('admin/dishes/', views.список_блюд_админ, name='список_блюд_админ'),
 ]
