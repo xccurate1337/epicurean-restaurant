@@ -3,6 +3,19 @@
 {% block title %}Главная - Ресторан "Эпикурей"{% endblock %}
 
 {% block content %}
+<!-- АДМИН-ПАНЕЛЬ -->
+{% if user.is_staff %}
+<div class="admin-panel mb-4 p-3 bg-light rounded">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">👨‍💼 Панель администратора</h5>
+        <div>
+            <a href="{% url 'добавить_блюдо' %}" class="btn btn-primary btn-sm">➕ Добавить блюдо</a>
+            <a href="{% url 'список_блюд_админ' %}" class="btn btn-outline-primary btn-sm">🍽️ Управление блюдами</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <h1 class="page-title">Искусство вкуса 🍽️</h1>
 
 <!-- Фильтры -->
